@@ -6,7 +6,7 @@ from datetime import datetime
 measure_units = {0:"mg/m3" , 1:"g/m3", 2:"µg/m3", 3:"%"}
 
 
-
+st.set_page_config(layout="wide")
 st.title("Analyse du SPT150")
 uploaded_file = st.file_uploader("Choisir un fichier csv", type="csv")
 
