@@ -5,7 +5,13 @@ from datetime import datetime
 
 measure_units = {0:"mg/m3" , 1:"g/m3", 2:"µg/m3", 3:"%"}
 
-st.set_page_config(layout="wide")
+
+st.set_page_config(
+    page_title="Analyse du SPT150",
+    page_icon="🔍",
+    layout="wide"
+)
+
 st.title("Analyse du SPT150")
 uploaded_file = st.file_uploader("Choisir un fichier csv", type="csv")
 
@@ -26,7 +32,7 @@ if uploaded_file is not None:
 
     # Variable
 
-    col_to_display = ['Date', 'Heure','Mesure instantannée','Mesure moyennée sur 1 min.','Mesure moyennée sur X min.','Facteur de calibration']
+    col_to_display = ['Date', 'Heure','Mesure instantannée','Mesure moyennée sur 1 min.','Mesure moyennée sur X min.']
 
 
 
@@ -55,9 +61,10 @@ if uploaded_file is not None:
 
     st.divider()
 
-    moyenne_value = df_filtered['Mesure instantannée'].mean().round(2)
-    min_value = df_filtered['Mesure instantannée'].min()
-    max_value = df_filtered['Mesure instantannée'].max()
+    moyenne_value = df_filtered['Mesure moyennée sur 1 min.'].mean().round(3)
+    dernier_facteur = df_filtered['Facteur de calibration'].iloc[-1]
+    facteur_utilise = 1 if dernier_facteur == 0 else dernier_facteur
+    valeur_ref = (moyenne_value / facteur_utilise).round(3)
 
     if with_seuil:
         num_seuil = colSeuil2.number_input("Valeur du seuil ")
@@ -67,10 +74,9 @@ if uploaded_file is not None:
     # Partie sur les statistiques
 
     st.write("## Statistiques")
-    col3,col4,col5 = st.columns(3)
-    col3.write(f"**Moyenne :** {moyenne_value} {unit}")
-    col4.write(f"**Min :** {min_value} {unit}")
-    col5.write(f"**Max :** {max_value} {unit}")
+    col3,col4 = st.columns(2)
+    col3.write(f"**Moyenne des mesures moyennées sur 1 min :** {moyenne_value} {unit}")
+    col4.write(f"**Valeur de référence pour calibration manuelle :** {valeur_ref}")
 
     if with_seuil:
         st.write(f"**Nombre de fois où le seuil est dépassé :** {nb_seuil_depasse}")
