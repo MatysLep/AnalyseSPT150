@@ -7,12 +7,16 @@ measure_units = {0:"mg/m3" , 1:"g/m3", 2:"µg/m3", 3:"%"}
 
 
 st.set_page_config(
-    page_title="Analyse du SPT150",
-    page_icon="🔍",
+    page_title="Analyse Mesures SPT150",
+    page_icon="./logo-spt150.png",
     layout="wide"
 )
-
-st.title("Analyse du SPT150")
+colTitle, colImage = st.columns([2,2])
+colTitle.title("Analyse Mesures SPT150")
+with colImage:
+    subcol1, subcol2 = st.columns([6, 4])  # simulate right-align
+    with subcol2:
+        st.image("seframlogo.png", width=250)
 uploaded_file = st.file_uploader("Choisir un fichier csv", type="csv")
 
 if uploaded_file is not None:
@@ -68,8 +72,7 @@ if uploaded_file is not None:
 
     if with_seuil:
         num_seuil = colSeuil2.number_input("Valeur du seuil ")
-        nb_seuil_depasse = df_filtered[df_filtered['Mesure instantannée'] > num_seuil]['Mesure instantannée'].count()
-
+        df_filtered['seuil'] = num_seuil
 
     # Partie sur les statistiques
 
@@ -78,16 +81,22 @@ if uploaded_file is not None:
     col3.write(f"**Moyenne des mesures moyennées sur 1 min :** {moyenne_value} {unit}")
     col4.write(f"**Valeur de référence pour calibration manuelle :** {valeur_ref}")
 
-    if with_seuil:
-        st.write(f"**Nombre de fois où le seuil est dépassé :** {nb_seuil_depasse}")
 
     st.divider()
 
     # Partie sur les graphes
 
-    chart_data = df_filtered[[
-        'Mesure instantannée',
-        'Mesure moyennée sur 1 min.',
-        'Mesure moyennée sur X min.'
-    ]]
+    if with_seuil:
+        chart_data = df_filtered[[
+            'Mesure instantannée',
+            'Mesure moyennée sur 1 min.',
+            'Mesure moyennée sur X min.',
+            'seuil'
+        ]]
+    else :
+        chart_data = df_filtered[[
+            'Mesure instantannée',
+            'Mesure moyennée sur 1 min.',
+            'Mesure moyennée sur X min.'
+        ]]
     st.line_chart(data=chart_data.tail(10000))
