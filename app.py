@@ -76,7 +76,7 @@ if uploaded_file is not None:
 
     # Partie sur les statistiques
 
-    st.write("## Statistiques")
+    st.write("## Graphique")
     col3,col4 = st.columns(2)
     col3.write(f"**Moyenne des mesures moyennées sur 1 min :** {moyenne_value} {unit}")
     col4.write(f"**Valeur de référence pour calibration manuelle :** {valeur_ref}")
